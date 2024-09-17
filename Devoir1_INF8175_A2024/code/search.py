@@ -79,9 +79,9 @@ def tinyMazeSearch(problem:SearchProblem)->List[Direction]:
     from game import Directions
     s = Directions.SOUTH
     w = Directions.WEST
-    return  [s, s, w, s, w, w, s, w]
+    return [s, s, w, s, w, w, s, w]
 
-def depthFirstSearch(problem:SearchProblem)->List[Direction]:
+def depthFirstSearch(problem: SearchProblem) -> List[Direction]:
     """
     Search the deepest nodes in the search tree first.
 
@@ -95,33 +95,65 @@ def depthFirstSearch(problem:SearchProblem)->List[Direction]:
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
+    s = problem.getStartState()
+    fringe = util.Stack()
+    fringe.push([s, []])  # [sommet, direction]
+    visited = []
 
-    '''
-        INSÉREZ VOTRE SOLUTION À LA QUESTION 1 ICI
-    '''
-
-    util.raiseNotDefined()
-
-
-def breadthFirstSearch(problem:SearchProblem)->List[Direction]:
+    while not fringe.isEmpty():
+        s, direction = fringe.pop()
+        if problem.isGoalState(s):
+            return direction
+        else:
+            if s not in visited:
+                visited.append(s)
+                neighbors = problem.getSuccessors(s)
+                for n_s, n_dir, _ in neighbors:
+                    if n_s not in visited:
+                        fringe.push([n_s, direction + [n_dir]])
+    return []
+def breadthFirstSearch(problem: SearchProblem) -> List[Direction]:
     """Search the shallowest nodes in the search tree first."""
+    s = problem.getStartState()
+    fringe = util.Queue()
+    fringe.push([s, []])  # [sommet, direction]
+    visited = []
 
+    while not fringe.isEmpty():
+        s, direction = fringe.pop()
+        if problem.isGoalState(s):
+            return direction
+        else:
+            if s not in visited:
+                visited.append(s)
+                neighbors = problem.getSuccessors(s)
+                for n_s, n_dir, _ in neighbors:
+                    if n_s not in visited:
+                        fringe.push([n_s, direction + [n_dir]])
+    return []
 
-    '''
-        INSÉREZ VOTRE SOLUTION À LA QUESTION 2 ICI
-    '''
-
-    util.raiseNotDefined()
-
-def uniformCostSearch(problem:SearchProblem)->List[Direction]:
+def uniformCostSearch(problem: SearchProblem) -> List[Direction]:
     """Search the node of least total cost first."""
+    fringe = util.PriorityQueue()
+    s = problem.getStartState()
+    fringe.push([s, [], 0], 0)  # [sommet, directions, cout]
+    visited = {}
 
+    while not fringe.isEmpty():
+        s, direction, cost = fringe.pop()
+        if problem.isGoalState(s):
+            return direction
 
-    '''
-        INSÉREZ VOTRE SOLUTION À LA QUESTION 3 ICI
-    '''
+        if s not in visited or visited[s] > cost:
+            visited[s] = cost
 
-    util.raiseNotDefined()
+            neighbors = problem.getSuccessors(s)
+            for n_s, n_dir, n_cost in neighbors:
+                new_cost = cost + n_cost
+                if n_s not in visited or visited[n_s] > new_cost:
+                    new_direction = direction + [n_dir]
+                    fringe.update((n_s, new_direction, new_cost), new_cost)
+    return []
 
 def nullHeuristic(state:GameState, problem:SearchProblem=None)->List[Direction]:
     """
@@ -130,13 +162,29 @@ def nullHeuristic(state:GameState, problem:SearchProblem=None)->List[Direction]:
     """
     return 0
 
-def aStarSearch(problem:SearchProblem, heuristic=nullHeuristic)->List[Direction]:
+def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic) -> List[Direction]:
     """Search the node that has the lowest combined cost and heuristic first."""
-    '''
-        INSÉREZ VOTRE SOLUTION À LA QUESTION 4 ICI
-    '''
+    fringe = util.PriorityQueue()
+    s = problem.getStartState()
+    priority_s = heuristic(s, problem)
+    fringe.push([s, [], 0], priority_s)  # [sommet, directions, cout]
+    visited = {}
 
-    util.raiseNotDefined()
+    while not fringe.isEmpty():
+        s, direction, cost = fringe.pop()
+        if problem.isGoalState(s):
+            return direction
+
+        if s not in visited or visited[s] > cost:
+            visited[s] = cost
+
+            neighbors = problem.getSuccessors(s)
+            for n_s, n_dir, n_cost in neighbors:
+                new_cost = cost + n_cost
+                if n_s not in visited or visited[n_s] > new_cost:
+                    new_direction = direction + [n_dir]
+                    fringe.update((n_s, new_direction, new_cost), new_cost+heuristic(n_s, problem))
+    return []
 
 
 # Abbreviations
