@@ -155,7 +155,7 @@ def uniformCostSearch(problem: SearchProblem) -> List[Direction]:
                     fringe.update((n_s, new_direction, new_cost), new_cost)
     return []
 
-def nullHeuristic(state:GameState, problem:SearchProblem=None)->List[Direction]:
+def nullHeuristic(state:GameState, problem:SearchProblem=None)->int:
     """
     A heuristic function estimates the cost from the current state to the nearest
     goal in the provided SearchProblem.  This heuristic is trivial.
