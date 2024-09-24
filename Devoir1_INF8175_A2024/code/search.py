@@ -106,7 +106,7 @@ def depthFirstSearch(problem: SearchProblem) -> List[Direction]:
             return direction
         else:
             if s not in visited:
-                visited.append(s)
+                visited.add(s)
                 neighbors = problem.getSuccessors(s)
                 for n_s, n_dir, _ in neighbors:
                     if n_s not in visited:
@@ -118,7 +118,7 @@ def breadthFirstSearch(problem: SearchProblem) -> List[Direction]:
     s = problem.getStartState()
     fringe = util.Queue()
     fringe.push([s, []])  # [sommet, direction]
-    visited = []
+    visited = set()
 
     while not fringe.isEmpty():
         s, direction = fringe.pop()
@@ -126,7 +126,7 @@ def breadthFirstSearch(problem: SearchProblem) -> List[Direction]:
             return direction
         else:
             if s not in visited:
-                visited.append(s)
+                visited.add(s)
                 neighbors = problem.getSuccessors(s)
                 for n_s, n_dir, _ in neighbors:
                     if n_s not in visited:
