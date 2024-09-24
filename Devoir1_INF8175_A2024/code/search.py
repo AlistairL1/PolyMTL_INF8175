@@ -98,7 +98,7 @@ def depthFirstSearch(problem: SearchProblem) -> List[Direction]:
     s = problem.getStartState()
     fringe = util.Stack()
     fringe.push([s, []])  # [sommet, direction]
-    visited = []
+    visited = set()
 
     while not fringe.isEmpty():
         s, direction = fringe.pop()
