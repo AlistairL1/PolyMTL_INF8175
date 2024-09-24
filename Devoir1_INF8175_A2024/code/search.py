@@ -111,6 +111,7 @@ def depthFirstSearch(problem: SearchProblem) -> List[Direction]:
                 for n_s, n_dir, _ in neighbors:
                     if n_s not in visited:
                         fringe.push([n_s, direction + [n_dir]])
+                        #test git
     return []
 def breadthFirstSearch(problem: SearchProblem) -> List[Direction]:
     """Search the shallowest nodes in the search tree first."""
