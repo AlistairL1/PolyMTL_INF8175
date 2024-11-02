@@ -24,14 +24,19 @@ class MyPlayer(PlayerDivercite):
         super().__init__(piece_type, name)
 
     def heuristic(self, current_state):
-        for action in GameState.generate_possible_light_actions
-        scores = GameStateDivercite.get_scores
+        '''for action in GameState.generate_possible_heavy_actions(current_state):
+            score = GameStateDivercite.get_scores(action.next_game_state)        
+        return score'''
         
-        return score
+        possible_actions = current_state.generate_possible_heavy_actions()
+        action = next(possible_actions)
+        best_score = action.get_next_game_state().scores[self.get_id()] - action.get_next_game_state().scores[action.next_game_state().next_player().get_id()]
+
+        return best_score
 
     def maxValue(self, current_state, alpha, beta, depth):
         if depth >= 4:
-            return self.heuristic(current_state, player), None
+            return self.heuristic(current_state), None
         best_value = float('-inf')
         best_action = None
         for action in GameState.generate_possible_heavy_actions(current_state):
@@ -47,7 +52,7 @@ class MyPlayer(PlayerDivercite):
     
     def minValue(self, current_state, alpha, beta, depth):
         if depth >= 4:
-            return self.heuristic(current_state, player), None
+            return self.heuristic(current_state), None
         best_value = float('inf')
         best_action = None
         for action in GameState.generate_possible_heavy_actions(current_state):
@@ -73,5 +78,6 @@ class MyPlayer(PlayerDivercite):
             Action: The best action as determined by minimax.
         """
 
-        #TODO
-        raise MethodNotImplementedError()
+        best_value, best_action = self.maxValue(current_state, float('-inf'), float('inf'), depth=4)
+        
+        return best_action
