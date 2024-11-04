@@ -1,5 +1,5 @@
-% NOM_ETUDIANT_1 (MATRICULE_1)
-% NOM_ETUDIANT_2 (MATRICULE_2)
+% LUCET (2413675)
+% DELFORGE (2412494)
 
 include "globals.mzn";
 
@@ -24,8 +24,30 @@ array [1..n] of var 1..n: assignation_role;
 %-----------------------------------------------------------------------------%
 % Partie étudiant
 %-----------------------------------------------------------------------------%
+n = 9;
+costumes = { Rose, Rouge, Jaune, Violet, Orange, Vert, Bleu, Azur, Brun };
+
+choix_costume = [| Orange, Orange, Azur, Azur, Azur,  Rouge, Rouge, Rouge, Brun
+                |  Orange, Azur,   Azur, Azur, Azur,  Rouge, Rouge, Rouge, Brun
+                |  Azur,   Azur,   Vert, Vert, Azur,  Azur,  Brun,  Brun,  Brun
+                |  Azur,   Azur,   Vert, Azur, Azur,  Azur,  Brun,  Rose,  Rose
+                |  Azur,   Violet, Vert, Azur, Jaune, Jaune, Brun,  Brun,  Rose
+                |  Violet, Violet, Vert, Azur, Jaune, Jaune, Bleu,  Bleu,  Rose
+                |  Violet, Vert,   Vert, Azur, Azur,  Azur,  Bleu,  Bleu,  Bleu
+                |  Violet, Violet, Vert, Vert, Vert,  Azur,  Azur,  Vert,  Bleu
+                |  Vert,   Vert,   Vert, Vert, Vert,  Vert,  Vert,  Vert,  Vert  |];
 
 
+constraint forall(i in 1..n, j in 1..n where i != j)(
+  assignation_role[i] != assignation_role[j] \/ choix_costume[assignation_role[i], i] != choix_costume[assignation_role[j], j]
+);
+constraint forall(i in 1..n-1)(
+  abs(assignation_role[i] - assignation_role[i+1]) > 1
+);
+constraint alldifferent(assignation_role);
+constraint forall(c in costumes)(
+  sum(i in 1..n)(choix_costume[assignation_role[i], i] = c) <= 1
+);
 
 %-----------------------------------------------------------------------------%
 
