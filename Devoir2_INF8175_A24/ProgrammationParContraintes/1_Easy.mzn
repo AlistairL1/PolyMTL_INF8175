@@ -24,30 +24,30 @@ array [1..n] of var 1..n: assignation_role;
 %-----------------------------------------------------------------------------%
 % Partie étudiant
 %-----------------------------------------------------------------------------%
-n = 9;
-costumes = { Rose, Rouge, Jaune, Violet, Orange, Vert, Bleu, Azur, Brun };
-
-choix_costume = [| Orange, Orange, Azur, Azur, Azur,  Rouge, Rouge, Rouge, Brun
-                |  Orange, Azur,   Azur, Azur, Azur,  Rouge, Rouge, Rouge, Brun
-                |  Azur,   Azur,   Vert, Vert, Azur,  Azur,  Brun,  Brun,  Brun
-                |  Azur,   Azur,   Vert, Azur, Azur,  Azur,  Brun,  Rose,  Rose
-                |  Azur,   Violet, Vert, Azur, Jaune, Jaune, Brun,  Brun,  Rose
-                |  Violet, Violet, Vert, Azur, Jaune, Jaune, Bleu,  Bleu,  Rose
-                |  Violet, Vert,   Vert, Azur, Azur,  Azur,  Bleu,  Bleu,  Bleu
-                |  Violet, Violet, Vert, Vert, Vert,  Azur,  Azur,  Vert,  Bleu
-                |  Vert,   Vert,   Vert, Vert, Vert,  Vert,  Vert,  Vert,  Vert  |];
+n = 7;
+costumes = { Rose, Rouge, Jaune, Violet, Orange, Vert, Bleu };
+choix_costume = [| Orange, Orange, Orange, Orange, Vert,  Vert,  Bleu
+                |  Jaune,  Orange, Orange, Orange, Bleu,  Bleu,  Bleu
+                |  Jaune,  Violet, Violet, Orange, Bleu,  Bleu,  Bleu
+                |  Jaune,  Jaune,  Orange, Orange, Bleu,  Bleu,  Rouge
+                |  Jaune,  Jaune,  Orange, Rose,   Rose,  Rose,  Rouge
+                |  Rouge,  Rouge,  Rouge,  Rouge,  Rose,  Rose,  Rouge
+                |  Rouge,  Rouge,  Rouge,  Rouge,  Rouge, Rouge, Rouge |];
 
 
+
+% Contrainte 1 :  S'assurer que deux acteurs différents ne peuvent pas avoir à la fois le même rôle et le même costume
 constraint forall(i in 1..n, j in 1..n where i != j)(
-  assignation_role[i] != assignation_role[j] \/ choix_costume[assignation_role[i], i] != choix_costume[assignation_role[j], j]
-);
-constraint forall(i in 1..n-1)(
-  abs(assignation_role[i] - assignation_role[i+1]) > 1
-);
+  assignation_role[i] != assignation_role[j] \/ choix_costume[assignation_role[i], i] != choix_costume[assignation_role[j], j]);
+
+% Contrainte 2 : Vérification que les rôles donnés aux acteurs voisins ne sont pas adjacents
+constraint forall(i in 1..(n-1))(abs(assignation_role[i] - assignation_role[i+1]) >= 2);
+
+% Contrainte 3 : Chaque acteur reçoit un rôle différent
 constraint alldifferent(assignation_role);
-constraint forall(c in costumes)(
-  sum(i in 1..n)(choix_costume[assignation_role[i], i] = c) <= 1
-);
+
+% Contrainte 4 : Chaque costume n'est utilisé qu'une seule fois
+constraint forall(c in costumes)(sum(i in 1..n)(choix_costume[assignation_role[i], i] = c) = 1);
 
 %-----------------------------------------------------------------------------%
 
