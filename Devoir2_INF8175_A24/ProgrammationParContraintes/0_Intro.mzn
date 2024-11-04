@@ -23,14 +23,14 @@ var int: p;
 %-----------------------------------------------------------------------------%
 % Partie étudiant
 %-----------------------------------------------------------------------------%
-% 1 : Le nombre est pair
+% 1 : C'est un nombre pair
 constraint chiffres[4] mod 2 = 0;
 
-% 2 : Le nombre ne contient pas de 0
+% 2 : Il n'y a pas de 0 dans le nombre
 constraint forall(i in 1..4)(chiffres[i] != 0);
 
-% 3 : Les chiffres sont tous différents
-constraint alldifferent([chiffres[1], chiffres[2], chiffres[3], chiffres[4]]);
+% 3 : Tous les chiffres sont différents
+constraint alldifferent(chiffres);
 
 % 4 : Le chiffre des milliers doit être supérieur à celui des centaines
 constraint chiffres[1] > chiffres[2];
@@ -44,6 +44,8 @@ constraint chiffres[2] > chiffres[4];
 % 7 : La somme des quatre chiffres doit être supérieure à 15
 constraint sum(i in 1..4)(chiffres[i]) > 15;
 
+
+
 % 8 : Minimiser le produit des trois derniers chiffres
 p = product(i in 2..4)(chiffres[i]);
 solve minimize p;
@@ -54,3 +56,4 @@ nombre = sum(i in 1..4)(chiffres[i]*10^(4-i));
 output [
   show(nombre)
 ];
+
