@@ -24,17 +24,6 @@ array [1..n] of var 1..n: assignation_role;
 %-----------------------------------------------------------------------------%
 % Partie étudiant
 %-----------------------------------------------------------------------------%
-n = 7;
-costumes = { Rose, Rouge, Jaune, Violet, Orange, Vert, Bleu };
-choix_costume = [| Orange, Orange, Orange, Orange, Vert,  Vert,  Bleu
-                |  Jaune,  Orange, Orange, Orange, Bleu,  Bleu,  Bleu
-                |  Jaune,  Violet, Violet, Orange, Bleu,  Bleu,  Bleu
-                |  Jaune,  Jaune,  Orange, Orange, Bleu,  Bleu,  Rouge
-                |  Jaune,  Jaune,  Orange, Rose,   Rose,  Rose,  Rouge
-                |  Rouge,  Rouge,  Rouge,  Rouge,  Rose,  Rose,  Rouge
-                |  Rouge,  Rouge,  Rouge,  Rouge,  Rouge, Rouge, Rouge |];
-
-
 
 % Contrainte 1 :  S'assurer que deux acteurs différents ne peuvent pas avoir à la fois le même rôle et le même costume
 constraint forall(i in 1..n, j in 1..n where i != j)(
@@ -49,6 +38,7 @@ constraint alldifferent(assignation_role);
 % Contrainte 4 : Chaque costume n'est utilisé qu'une seule fois
 constraint forall(c in costumes)(sum(i in 1..n)(choix_costume[assignation_role[i], i] = c) = 1);
 
+solve satisfy;
 %-----------------------------------------------------------------------------%
 
 output	
