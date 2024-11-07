@@ -1,4 +1,3 @@
-import numpy as np
 
 def solve(schedule):
     """
@@ -13,8 +12,8 @@ def solve(schedule):
     solution = {course: 0 for course in courses}
 
     # Fonction pour calculer le nombre de conflits
-    def nb_conflits(solution):
-        return sum(1 for course1, course2 in conflicts if solution[course1] == solution[course2])
+    def nb_conflits(sol):
+        return sum(1 for course1, course2 in conflicts if sol[course1] == sol[course2])
 
     nb_conflits_actuel = nb_conflits(solution)
     amelioration = True
@@ -37,4 +36,3 @@ def solve(schedule):
         nb_conflits_actuel = nb_conflits(solution)
 
     return solution
-
