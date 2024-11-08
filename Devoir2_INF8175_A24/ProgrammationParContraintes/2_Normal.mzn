@@ -36,14 +36,18 @@ var int: fin_projet;
 %-----------------------------------------------------------------------------%
 % Partie étudiant
 %-----------------------------------------------------------------------------%
-n = 10;
-m = 60;
+% 1. Calcul de la fin de chaque tâche
+constraint forall(i in 1..n)(fin_tache[i] = debut_tache[i] + duree_tache[i]);
 
-duree_tache = [8, 1, 5, 9, 1, 9, 9, 6, 7, 5];
-ressource_tache = [4, 1, 7, 9, 4, 4, 8, 8, 10, 9];
+% 2. Contrainte pour la consommation d'énergie
+constraint cumulative(debut_tache, duree_tache, ressource_tache, limite);
 
-limite = 12;
+% 3. Limite des démarrages simultanés
+constraint forall(v in debut_tache) (sum([1 | i in 1..n where debut_tache[i] = v]) <= 2);
 
+% Minimiser la fin du projet
+fin_projet = max(i in 1..n)(fin_tache[i]);
+solve minimize fin_projet;
 %-----------------------------------------------------------------------------%
 
 output [
