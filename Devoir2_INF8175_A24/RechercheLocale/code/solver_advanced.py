@@ -1,3 +1,6 @@
+import random as rd
+import numpy as np
+import time
 
 def solve(schedule):
     """
@@ -6,14 +9,14 @@ def solve(schedule):
     :return: a dictionary of the form {course: time} where course is a course and time a time slot.
     """
     # Initialisation : assigner chaque cours au créneau initial 0
-    courses = schedule.course_list
-    conflicts = schedule.conflict_list
-    max_time_slots = len(courses) // 2
-    solution = {course: 0 for course in courses}
+    courses = list(schedule.course_list)
+    conflicts = list(schedule.conflict_list)
 
-    # Fonction pour calculer le nombre de conflits
     def nb_conflits(sol):
         return sum(1 for course1, course2 in conflicts if sol[course1] == sol[course2])
+
+    max_time_slots = len(courses)
+    solution = {course: 0 for course in courses}
 
     nb_conflits_actuel = nb_conflits(solution)
     amelioration = True
@@ -26,10 +29,10 @@ def solve(schedule):
             for nouveau_creneau in range(max_time_slots):  # Essayer d'autres créneaux
                 if nouveau_creneau != creneau_actuel:
                     solution[course] = nouveau_creneau
-                    noubeau_nb_conflits = nb_conflits(solution)
-                    if noubeau_nb_conflits < nb_conflits_tempo:
+                    nouveau_nb_conflits = nb_conflits(solution)
+                    if nouveau_nb_conflits < nb_conflits_tempo:
                         creneau_actuel = nouveau_creneau
-                        nb_conflits_tempo = noubeau_nb_conflits
+                        nb_conflits_tempo = nouveau_nb_conflits
                         amelioration = True
                     # Pas besoin de revenir à l'état initial ici, car on applique directement le meilleur créneau
             solution[course] = creneau_actuel  # Appliquer le meilleur créneau trouvé
