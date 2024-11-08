@@ -1,6 +1,5 @@
-import random as rd
-import numpy as np
-import time
+# LUCET (2413675)
+# DELFORGE (2412494)
 
 def solve(schedule):
     """
