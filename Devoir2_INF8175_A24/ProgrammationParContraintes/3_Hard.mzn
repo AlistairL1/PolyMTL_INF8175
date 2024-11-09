@@ -1,5 +1,5 @@
-% NOM_ETUDIANT_1 (MATRICULE_1)
-% NOM_ETUDIANT_2 (MATRICULE_2)
+% LUCET (2413675)
+% DELFORGE (2412494)
 
 include "globals.mzn"; 
 
@@ -49,7 +49,31 @@ var int: temps_trajet;
 % Partie étudiant
 %-----------------------------------------------------------------------------%
 
+% 1 : Faire un circuit
+constraint alldifferent(chemin_tournee);
 
+constraint forall(i in 1..n-1)(circuit_tournee[chemin_tournee[i]] = chemin_tournee[i+1]);
+constraint circuit_tournee[chemin_tournee[n]] = chemin_tournee[1];
+
+% 2 : Respecter les fenêtres de temps pour chaque ville
+constraint forall(i in 1..n)(cumul_temps[i] >= fenetre_arrivee[i, 1]);
+constraint forall(i in 1..n)(cumul_temps[i] <= fenetre_arrivee[i, 2]);
+
+
+% 3 : Calcul des temps d'arrivée
+constraint forall(i in 1..n)(cumul_temps[circuit_tournee[i]] = cumul_temps[i] + distance[i, circuit_tournee[i]] + temps_attente[circuit_tournee[i]]);
+
+% 4 : Temps d'attente pour chaque ville
+constraint forall(i in 1..n)(temps_attente[i] = max(0, fenetre_arrivee[i, 1] - cumul_temps[i]));
+
+% 5 : Calcul du temps total incluant le retour au point de départ
+constraint temps_trajet = cumul_temps[n] + distance[chemin_tournee[n], chemin_tournee[1]];
+
+%-----------------------------------------------------------------------------%
+% Résolution
+%-----------------------------------------------------------------------------%
+
+solve minimize temps_trajet;
 %-----------------------------------------------------------------------------%
 
 output [
