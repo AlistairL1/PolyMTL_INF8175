@@ -32,18 +32,17 @@ constraint forall(i in 1..4)(chiffres[i] != 0);
 % 3 : Tous les chiffres sont différents
 constraint alldifferent(chiffres);
 
-% 4 : Le chiffre des milliers doit être supérieur à celui des centaines
+% 4 : Le chiffre des milliers est supérieur à celui des centaines
 constraint chiffres[1] > chiffres[2];
 
-% 5 : Le chiffre des dizaines doit être inférieur à celui des unités
+% 5 : Le chiffre des dizaines est inférieur à celui des unités
 constraint chiffres[3] < chiffres[4];
 
-% 6 : Le chiffre des centaines doit être supérieur à celui des unités
+% 6 : Le chiffre des centaines est supérieur à celui des unités
 constraint chiffres[2] > chiffres[4];
 
-% 7 : La somme des quatre chiffres doit être supérieure à 15
+% 7 : La somme des quatre chiffres este supérieure à 15
 constraint sum(i in 1..4)(chiffres[i]) > 15;
-
 
 
 % 8 : Minimiser le produit des trois derniers chiffres
