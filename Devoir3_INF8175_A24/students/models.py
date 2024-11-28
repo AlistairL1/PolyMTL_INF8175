@@ -1,3 +1,5 @@
+import numpy as np
+
 import nn
 from backend import PerceptronDataset, RegressionDataset, DigitClassificationDataset
 
@@ -45,15 +47,13 @@ class PerceptronModel(object):
         """
         Train the perceptron until convergence.
         """
-        classification_mauvaise = True
+        has_error = True
 
-        while classification_mauvaise:
-            classification_mauvaise = False
-
+        while has_error:
+            has_error = False
             for x, y in dataset.iterate_once(1):
-
                 if nn.as_scalar(y) != self.get_prediction(x):
-                    classification_mauvaise = True
+                    has_error = True
                     self.w.update(x, nn.as_scalar(y))
 
 
@@ -68,7 +68,12 @@ class RegressionModel(object):
 
     def __init__(self) -> None:
         # Initialize your model parameters here
-        "*** TODO: COMPLETE HERE FOR QUESTION 2 ***"
+        self.w1 = nn.Parameter(1, 50)
+        self.b1 = nn.Parameter(1, 50)
+
+        self.w2 = nn.Parameter(50, 1)
+        self.b2 = nn.Parameter(1, 1)
+
 
     def run(self, x: nn.Constant) -> nn.Node:
         """
@@ -79,7 +84,12 @@ class RegressionModel(object):
         Returns:
             A node with shape (batch_size x 1) containing predicted y-values
         """
-        "*** TODO: COMPLETE HERE FOR QUESTION 2 ***"
+        linear1 = nn.Linear(x, self.w1)
+        couche1 = nn.AddBias(linear1, self.b1)
+        activation1 = nn.ReLU(couche1)
+        linear2 = nn.Linear(activation1, self.w2)
+        couche2 = nn.AddBias(linear2, self.b2)
+        return couche2
 
     def get_loss(self, x: nn.Constant, y: nn.Constant) -> nn.Node:
         """
@@ -91,13 +101,29 @@ class RegressionModel(object):
                 to be used for training
         Returns: a loss node
         """
-        "*** TODO: COMPLETE HERE FOR QUESTION 2 ***"
+        prediction_y = self.run(x)
+        return nn.SquareLoss(prediction_y, y)
 
     def train(self, dataset: RegressionDataset) -> None:
         """
         Trains the model.
         """
-        "*** TODO: COMPLETE HERE FOR QUESTION 2 ***"
+        lr = 0.01
+        improving = True
+        while improving:
+            loss_tot = 0
+            for x, y in dataset.iterate_once(4):
+                loss = self.get_loss(x, y)
+                loss_tot += nn.as_scalar(loss)
+                grad= nn.gradients(loss, [self.w1, self.b1, self.w2, self.b2])
+                self.w1.update(grad[0], -lr)
+                self.b1.update(grad[1], -lr)
+                self.w2.update(grad[2], -lr)
+                self.b2.update(grad[3], -lr)
+
+            if loss_tot < 0.02:
+                improving = False
+
 
 
 class DigitClassificationModel(object):
