@@ -143,7 +143,11 @@ class DigitClassificationModel(object):
 
     def __init__(self) -> None:
         # Initialize your model parameters here
-        "*** TODO: COMPLETE HERE FOR QUESTION 3 ***"
+        self.w1 = nn.Parameter(784, 256)
+        self.b1 = nn.Parameter(1, 256)
+
+        self.w2 = nn.Parameter(256, 10)
+        self.b2 = nn.Parameter(1, 10)
 
     def run(self, x: nn.Constant) -> nn.Node:
         """
@@ -159,7 +163,12 @@ class DigitClassificationModel(object):
             A node with shape (batch_size x 10) containing predicted scores
                 (also called logits)
         """
-        "*** TODO: COMPLETE HERE FOR QUESTION 3 ***"
+        linear1 = nn.Linear(x, self.w1)
+        couche1 = nn.AddBias(linear1, self.b1)
+        activation1 = nn.ReLU(couche1)
+        linear2 = nn.Linear(activation1, self.w2)
+        couche2 = nn.AddBias(linear2, self.b2)
+        return couche2
 
     def get_loss(self, x: nn.Constant, y: nn.Constant) -> nn.Node:
         """
@@ -174,10 +183,25 @@ class DigitClassificationModel(object):
             y: a node with shape (batch_size x 10)
         Returns: a loss node
         """
-        "*** TODO: COMPLETE HERE FOR QUESTION 3 ***"
+        prediction_y = self.run(x)
+        return nn.SoftmaxLoss(prediction_y, y)
 
     def train(self, dataset: DigitClassificationDataset) -> None:
         """
         Trains the model.
         """
-        "*** TODO: COMPLETE HERE FOR QUESTION 3 ***"
+        lr = 0.01
+        improving = True
+        while improving:
+            loss_tot = 0
+            for x, y in dataset.iterate_once(4):
+                loss = self.get_loss(x, y)
+                loss_tot += nn.as_scalar(loss)
+                grad= nn.gradients(loss, [self.w1, self.b1, self.w2, self.b2])
+                self.w1.update(grad[0], -lr)
+                self.b1.update(grad[1], -lr)
+                self.w2.update(grad[2], -lr)
+                self.b2.update(grad[3], -lr)
+
+            if dataset.get_validation_accuracy() >= 0.97:
+                improving = False
