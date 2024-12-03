@@ -3,6 +3,7 @@ from seahorse.game.action import Action
 from seahorse.game.game_state import GameState
 from game_state_divercite import GameStateDivercite
 from seahorse.utils.custom_exceptions import MethodNotImplementedError
+import random
 
 class MyPlayer(PlayerDivercite):
     """
@@ -22,26 +23,44 @@ class MyPlayer(PlayerDivercite):
             time_limit (float, optional): the time limit in (s)
         """
         super().__init__(piece_type, name)
+    
+
 
     def heuristic(self, current_state):
-        '''for action in GameState.generate_possible_heavy_actions(current_state):
-            score = GameStateDivercite.get_scores(action.next_game_state)        
-        return score'''
+        if self == current_state.players[0]:
+            opponent = current_state.players[1]
+        else:
+            opponent = current_state.players[0]
+
         
         possible_actions = current_state.generate_possible_heavy_actions()
-        action = next(possible_actions)
-        best_score = action.get_next_game_state().scores[self.get_id()] - action.get_next_game_state().scores[action.next_game_state().next_player().get_id()]
+
+        best_score = float('-inf')
+        for action in possible_actions:
+            score = action.get_next_game_state().scores[self.get_id()] - action.get_next_game_state().scores[opponent.get_id()]
+            if best_score == None or score > best_score:
+                best_score = score
 
         return best_score
+    
+    
+        
+    
 
     def maxValue(self, current_state, alpha, beta, depth):
+        
         if depth >= 4:
             return self.heuristic(current_state), None
         best_value = float('-inf')
         best_action = None
-        for action in GameState.generate_possible_heavy_actions(current_state):
-            new_state = GameState.apply_action(current_state, action)
-            value, _ = self.minValue(new_state, alpha, beta, depth+1)
+        
+        for action in current_state.generate_possible_light_actions():
+        
+            new_state = current_state.apply_action(action)
+            if current_state.get_step() >= 38:
+                value, _ = self.minValue(new_state, alpha, beta, 2)
+            else:
+                value, _ = self.minValue(new_state, alpha, beta, depth+1)
             if value > best_value:
                 best_value = value
                 best_action = action
@@ -51,13 +70,19 @@ class MyPlayer(PlayerDivercite):
         return best_value, best_action
     
     def minValue(self, current_state, alpha, beta, depth):
+        
+        
         if depth >= 4:
             return self.heuristic(current_state), None
         best_value = float('inf')
         best_action = None
-        for action in GameState.generate_possible_heavy_actions(current_state):
-            new_state = GameState.apply_action(current_state, action)
-            value, _ = self.maxValue(new_state, alpha, beta, depth+1)
+        
+        for action in current_state.generate_possible_light_actions():
+            new_state = current_state.apply_action(action)
+            if current_state.get_step() >= 38:
+                value, _ = self.minValue(new_state, alpha, beta, 2)
+            else:
+                value, _ = self.minValue(new_state, alpha, beta, depth+1)
             if value < best_value:
                 best_value = value
                 best_action = action
@@ -77,7 +102,22 @@ class MyPlayer(PlayerDivercite):
         Returns:
             Action: The best action as determined by minimax.
         """
-
-        best_value, best_action = self.maxValue(current_state, float('-inf'), float('inf'), depth=4)
+        if current_state.get_step() <=2:
+            possible_actions = current_state.get_possible_light_actions()
+            return random.choice(list(possible_actions))
+        elif current_state.get_step() > 2 and current_state.get_step() < 25:
+            best_value, best_action = self.maxValue(current_state, float('-inf'), float('inf'), depth=1)
+            return best_action
+        elif current_state.get_step() >= 25 and current_state.get_step() < 36:
+            best_value, best_action = self.maxValue(current_state, float('-inf'), float('inf'), depth=0)
+            return best_action
+        else:
+            best_value, best_action = self.maxValue(current_state, float('-inf'), float('inf'), depth=1)
+            return best_action
         
-        return best_action
+
+
+
+    
+    
+
