@@ -1,4 +1,5 @@
 import math
+import time
 from solver_advanced import solve
 from schedule import Schedule
 print("***********************************************************")
@@ -12,12 +13,14 @@ instances = [Schedule("instances/"+i) for i in instances]
 scores_beaten = [[],[]]
 has_failed = False
 for i in range(len(instances)):
+    start_time = time.time()
     print("***********************************************************")
     print("[INFO] autograding: instance",instances[i].instance_name)
     try:
         solution = solve(instances[i])
         score = instances[i].get_n_creneaux(solution)
         valid = instances[i].verify_solution(solution)
+        solving_time = round((time.time() - start_time) / 60, 2)
         if not valid:
             raise Exception("Invalid solution")
         print("[INFO] RUN: passed")
@@ -25,8 +28,13 @@ for i in range(len(instances)):
         print("[INFO] RUN: failed :",e)
         score = math.inf
         has_failed = True
-        
+
+    depassement = ""
+    if solving_time > 5:
+        depassement = "TIME OUT"
+
     print("[INFO] score: ",score)
+    print("[INFO] Execution time : "+ str(solving_time) +" minutes" + depassement)
     print("[INFO] Random player beaten ("+str(scores_randoms[i])+"):", score < scores_randoms[i])
     print("[INFO] Secret player beaten ("+str(scores_secrets[i])+"):", score < scores_secrets[i])
     scores_beaten[0].append(score < scores_randoms[i])
@@ -40,12 +48,12 @@ if has_failed:
 else:
     
     print("[INFO] RUN: passed, >0/10")
-    if sum(scores_beaten[0]) < 3:
+    if sum(scores_beaten[0]) < 4:
         print("[INFO] Random player beaten: failed, <5/10")
         print("[INFO] Hint: vérifiez que votre recherche locale cherche à minimiser le coût, vérifiez que la fonction de voisinage est correcte, que la recherche locale s'arrête bien quand il n'y a plus d'amélioration possible")
     else:
         print("[INFO] Random player beaten: passed, >=5/10")
-        if (sum(scores_beaten[1]) < 3):
+        if (sum(scores_beaten[1]) < 4):
             print("[INFO] Secret player beaten: failed, <8/10")
             print("[INFO] Hint: Utilisez des metaheuristiques comme le recuit simulé ou le restart")
         else:

@@ -10,8 +10,8 @@ def parse_arguments():
     # Instances parameters
     parser.add_argument('--agent', type=str, default='naive')
     parser.add_argument('--infile', type=str, default='input')
-    parser.add_argument('--outfile', type=str, default='solution.txt')
-    parser.add_argument('--visufile', type=str, default='visualization.png')
+    parser.add_argument('--outfile', type=str, default=None)
+    parser.add_argument('--visufile', type=str, default=None)
 
     return parser.parse_args()
 
@@ -44,8 +44,10 @@ if __name__ == '__main__':
 
     solving_time = round((time.time() - start_time) / 60,2)
 
-    schedule.display_solution(solution,args.visufile)
-    schedule.save_solution(solution, args.outfile)
+    if args.visufile != None:
+        schedule.display_solution(solution, args.visufile)
+    if args.outfile != None:
+        schedule.save_solution(solution, args.outfile)
 
 
     print("***********************************************************")

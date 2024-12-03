@@ -1,5 +1,5 @@
-% NOM_ETUDIANT_1 (MATRICULE_1)
-% NOM_ETUDIANT_2 (MATRICULE_2)
+% LUCET (2413675)
+% DELFORGE (2412494)
 
 include "globals.mzn";
 
@@ -25,8 +25,19 @@ array [1..n] of var 1..n: assignation_role;
 % Partie étudiant
 %-----------------------------------------------------------------------------%
 
+% 1 : S'assurer que deux acteurs différents n'ont pas le même rôle ou le même costume
+constraint forall(i in 1..n, j in 1..n where i != j)(assignation_role[i] != assignation_role[j] \/ choix_costume[assignation_role[i], i] != choix_costume[assignation_role[j], j]);
 
+% 2 : Vérification que les rôles donnés aux acteurs voisins ne sont pas adjacents
+constraint forall(i in 1..(n-1))(abs(assignation_role[i] - assignation_role[i+1]) >= 2);
 
+% 3 : Chaque acteur reçoit un rôle différent
+constraint alldifferent(assignation_role);
+
+% 4 : Chaque costume n'est utilisé qu'une seule fois
+constraint forall(c in costumes)(sum(i in 1..n)(choix_costume[assignation_role[i], i] = c) = 1);
+
+solve satisfy;
 %-----------------------------------------------------------------------------%
 
 output	
